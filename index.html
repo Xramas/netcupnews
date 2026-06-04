@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth" x-data="appData()" :lang="currentLang === 'zh' ? 'zh-CN' : currentLang">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NetcupNews - Latest VPS Deals & Coupons</title>
+
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="css/font-text.css">
+    <link rel="stylesheet" href="css/font-icon.css">
+    <link rel="stylesheet" href="css/theme.css">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Titillium Web"', 'sans-serif'],
+                    },
+                    colors: {
+                        netcup: {
+                            dark: '#1e2855',
+                            darker: '#0a142d',
+                            cyan: '#00c8be',
+                            light: '#32aaa0',
+                            green: '#beff82',
+                            text: '#646464',
+                            bg: '#f8f9fa'
+                        }
+                    },
+                    backgroundImage: {
+                        'netcup-gradient': 'linear-gradient(0deg, #32aaa0 0%, #056473 50%, #1e2855 100%)',
+                        'netcup-footer': 'linear-gradient(0deg, #056473 0%, #1e2855 100%)'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>[x-cloak] { display: none !important; }</style>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+<body class="bg-netcup-bg text-netcup-text font-sans antialiased flex flex-col min-h-screen">
+
+    <div class="bg-[#1e2855] text-white text-xs md:text-sm py-2 px-4 text-center tracking-wide border-b border-white/10">
+        <span class="font-bold text-netcup-cyan" x-text="t('disclaimerLabel')"></span> 
+        <span x-text="t('disclaimerText')"></span>
+    </div>
+
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+            <a href="#" @click.prevent="goToPage('home')" class="text-2xl font-bold text-netcup-dark tracking-tight cursor-pointer">
+                netcup<span class="text-netcup-cyan">news</span>
+            </a>
+            
+            <nav class="hidden md:flex gap-8 font-semibold text-netcup-dark">
+                <a href="#deals" @click.prevent="goToPage('home', '#deals')" class="hover:text-netcup-cyan transition-colors cursor-pointer" x-text="t('latestDeals')"></a>
+                <a href="#deals" @click.prevent="goToPage('home', '#deals')" class="hover:text-netcup-cyan transition-colors cursor-pointer" x-text="t('vpsOffers')"></a>
+                <a href="#compare" @click.prevent="goToPage('home', '#compare')" class="hover:text-netcup-cyan transition-colors cursor-pointer" x-text="t('compareBtn')"></a>
+                <a href="#coupons" @click.prevent="goToPage('home', '#coupons')" class="hover:text-netcup-cyan transition-colors cursor-pointer" x-text="t('coupons2026')"></a>
+            </nav>
+
+            <div class="flex items-center gap-3 sm:gap-4">
+                <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden flex items-center justify-center w-10 h-10 rounded-lg text-netcup-dark hover:bg-gray-100 transition-colors" aria-label="Toggle navigation menu">
+                    <i class="ph-fill" :class="mobileMenuOpen ? 'ph-x text-xl' : 'ph-list text-2xl'"></i>
+                </button>
+
+                <div class="relative" x-data="{ open: false }">
+                    <button @click="open = !open" @click.outside="open = false" 
+                            class="flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5 hover:border-netcup-cyan transition-colors duration-300">
+                        <i class="ph-fill ph-globe text-netcup-dark text-lg"></i>
+                        <span class="text-xs sm:text-sm font-bold text-netcup-dark uppercase" x-text="currentLang"></span>
+                        <i class="ph-fill ph-caret-down text-netcup-dark text-xs transition-transform duration-300" :class="open ? 'rotate-180' : ''"></i>
+                    </button>
+                    
+                    <div x-show="open" 
+                         x-transition:enter="transition ease-out duration-200"
+                         x-transition:enter-start="opacity-0 scale-95 -translate-y-2"
+                         x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                         x-transition:leave="transition ease-in duration-150"
+                         x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                         x-transition:leave-end="opacity-0 scale-95 -translate-y-2"
+                         style="display: none;"
+                         class="absolute right-0 mt-2 w-28 bg-white border border-gray-100 rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.08)] py-2 z-50 overflow-hidden">
+                        
+                        <template x-for="lang in ['en', 'zh', 'de']" :key="lang">
+                            <button @click="changeLanguage(lang); open = false" 
+                                    class="w-full text-left px-4 py-2.5 text-sm font-bold transition-colors uppercase flex items-center justify-between"
+                                    :class="currentLang === lang ? 'text-netcup-cyan bg-netcup-cyan/10' : 'text-netcup-text hover:bg-gray-50 hover:text-netcup-dark'">
+                                <span x-text="lang"></span>
+                                <i x-show="currentLang === lang" class="ph-fill ph-check text-netcup-cyan"></i>
+                            </button>
+                        </template>
+                    </div>
+                </div>
+
+                <a href="https://www.netcup.com" target="_blank" class="btn-cyan border-2 border-netcup-cyan text-netcup-cyan hover:bg-netcup-cyan hover:text-netcup-dark font-bold py-1.5 px-3 sm:px-5 rounded text-xs sm:text-sm flex items-center gap-1">
+                    <span x-text="t('officialSite')"></span> 
+                    <i class="ph-fill ph-arrow-square-out"></i>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 移动端导航下拉面板 -->
+    <div x-show="mobileMenuOpen" x-cloak
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0 -translate-y-2"
+         x-transition:enter-end="opacity-100 translate-y-0"
+         x-transition:leave="transition ease-in duration-150"
+         x-transition:leave-start="opacity-100 translate-y-0"
+         x-transition:leave-end="opacity-0 -translate-y-2"
+         class="md:hidden bg-white border-t border-gray-100 shadow-lg sticky top-16 z-40">
+        <nav class="max-w-6xl mx-auto px-4 py-4 flex flex-col gap-1">
+            <a href="#deals" @click.prevent="goToPage('home', '#deals'); mobileMenuOpen = false"
+               class="flex items-center gap-3 px-4 py-3 rounded-lg font-semibold text-netcup-dark hover:bg-netcup-cyan/10 hover:text-netcup-cyan transition-colors"
+               x-text="t('latestDeals')"></a>
+            <a href="#deals" @click.prevent="goToPage('home', '#deals'); mobileMenuOpen = false"
+               class="flex items-center gap-3 px-4 py-3 rounded-lg font-semibold text-netcup-dark hover:bg-netcup-cyan/10 hover:text-netcup-cyan transition-colors"
+               x-text="t('vpsOffers')"></a>
+            <a href="#compare" @click.prevent="goToPage('home', '#compare'); mobileMenuOpen = false"
+               class="flex items-center gap-3 px-4 py-3 rounded-lg font-semibold text-netcup-dark hover:bg-netcup-cyan/10 hover:text-netcup-cyan transition-colors"
+               x-text="t('compareBtn')"></a>
+            <a href="#coupons" @click.prevent="goToPage('home', '#coupons'); mobileMenuOpen = false"
+               class="flex items-center gap-3 px-4 py-3 rounded-lg font-semibold text-netcup-dark hover:bg-netcup-cyan/10 hover:text-netcup-cyan transition-colors"
+               x-text="t('coupons2026')"></a>
+            <div class="border-t border-gray-100 mt-2 pt-3">
+                <a href="https://www.netcup.com" target="_blank"
+                   class="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border-2 border-netcup-cyan text-netcup-cyan font-bold hover:bg-netcup-cyan hover:text-netcup-dark transition-colors text-sm">
+                    <span x-text="t('officialSite')"></span>
+                    <i class="ph-fill ph-arrow-square-out"></i>
+                </a>
+            </div>
+        </nav>
+    </div>
+
+    <div x-show="currentPage === 'home'" x-cloak>
+        <section class="bg-netcup-gradient text-white py-16 md:py-24 px-4 relative overflow-hidden">
+            <div class="absolute inset-0 opacity-10 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MzkgMzcwIj48cGF0aCBkPSJNLTE5Ljk3IDg2Ljg2bDE5Ljk1IDE2IDE5Ljk2LTE2IDE5Ljk1IDE2IDE5Ljk2LTE2IDE5Ljk1IDE2IDE5Ljk1LTE2IDE5Ljk2IDE2IDE5Ljk1LTE2IDE5Ljk2IDE2IDE5Ljk1LTE2IDE5Ljk2IDE2IDE5Ljk1LTE2IDE5Ljk1IDE2IDE5Ljk2LTE2IDE5Ljk1IDE2IDE5Ljk2LTE2IDE5Ljk1IDE2IDE5Ljk2LTE2IDE5Ljk2IDE2IDE5Ljk2LTE2IDE5Ljk1IDE2IDE5Ljk2LTE2IDE5Ljk2IDE2IDE5Ljk3LTE2IiBmaWxsPSJub25lIiBzdHJva2U9IiMyMzkxYTUiIHN0cm9rZS13aWR0aD0iOC41OCIvPjwvc3ZnPg==')] bg-repeat"></div>
+            
+            <div class="max-w-4xl mx-auto text-center relative z-10">
+                <span class="inline-block py-1 px-3 rounded-full bg-netcup-dark text-netcup-cyan font-bold text-xs sm:text-sm mb-6 border border-netcup-cyan/30" x-text="t('updatedDaily')"></span>
+                <h1 class="text-3xl md:text-6xl font-bold mb-6 tracking-tight leading-tight" x-html="t('heroTitle')"></h1>
+                <p class="text-base md:text-xl text-gray-200 mb-10 max-w-2xl mx-auto leading-relaxed" x-text="t('heroDesc')"></p>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <a href="#deals" @click.prevent="goToPage('home', '#deals')" class="btn-cyan bg-netcup-cyan text-netcup-dark border-2 border-netcup-cyan font-bold py-3 px-6 sm:px-8 rounded hover:bg-transparent hover:text-netcup-cyan text-sm sm:text-base" x-text="t('viewDeals')"></a>
+                    <a href="#coupons" @click.prevent="goToPage('home', '#coupons')" class="btn-cyan bg-transparent text-white border-2 border-white font-bold py-3 px-6 sm:px-8 rounded hover:bg-white hover:text-netcup-dark text-sm sm:text-base" x-text="t('getPromoCodes')"></a>
+                </div>
+            </div>
+        </section>
+
+        <main class="max-w-6xl mx-auto px-4 py-16 w-full" id="deals">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold text-netcup-dark mb-4" x-text="t('categoryTitle')"></h2>
+                <div class="max-w-3xl mx-auto px-4">
+                    <p x-text="categories[activeCategory].description[currentLang]"
+                       :class="isFading ? 'opacity-0 scale-95' : 'opacity-100 scale-100'"
+                       class="text-netcup-text text-base sm:text-lg leading-relaxed transition-all duration-300 py-3 border-y border-gray-100 h-[5.5rem] flex items-center justify-center overflow-hidden">
+                    </p>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap justify-center gap-2 sm:gap-3 mb-12">
+                <template x-for="(label, key) in {'lite': 'tabLite', 'vps': 'tabVps', 'arm': 'tabArm', 'root': 'tabRoot'}">
+                    <button @click="switchCategory(key)" 
+                            :class="activeCategory === key ? 'bg-netcup-dark text-white shadow-md border-transparent' : 'bg-white border-gray-200 text-netcup-text hover:bg-gray-50'"
+                            class="px-5 py-2.5 rounded-full font-bold transition-all duration-300 text-sm md:text-base border" 
+                            x-text="t(label)">
+                    </button>
+                </template>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 transition-all duration-300 ease-in-out transform"
+                 :class="isFading ? 'opacity-0 translate-y-8' : 'opacity-100 translate-y-0'">
+                 
+                <template x-for="(card, index) in categories[activeCategory].cards" :key="card.name + activeCategory">
+                    <div class="bg-white rounded-lg shadow-[0_4px_20px_rgba(0,0,0,0.05)] hover:shadow-[0_10px_30px_rgba(0,0,0,0.1)] transition-shadow duration-300 flex flex-col border border-gray-100 group card-fade-in" :style="`animation-delay: ${index * 60}ms;`">
+                        <div class="p-8 flex-grow">
+                            <h3 class="text-2xl font-bold text-netcup-dark text-center mb-6 group-hover:text-netcup-cyan transition-colors duration-300" x-text="card.name"></h3>
+                            <ul class="space-y-3 text-netcup-text font-medium text-center">
+                                <template x-for="spec in (card.specs[currentLang] || card.specs['en'])">
+                                    <li x-text="spec"></li>
+                                </template>
+                            </ul>
+                        </div>
+                        <div class="bg-netcup-dark rounded-b-lg p-6 flex flex-col items-center relative overflow-hidden">
+                            <div class="absolute inset-0 bg-netcup-footer opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0"></div>
+                            <div class="relative z-10 flex flex-col items-center w-full">
+                                <span class="text-sm text-gray-300" x-text="t('monthlyOnly')"></span>
+                                <div class="text-[2.5rem] font-bold text-netcup-green leading-none my-2" x-text="`€ ${card.price}`"></div>
+                                <span class="text-xs text-gray-400 mb-5" x-text="t('inclVat')"></span>
+                                <a :href="card.url" target="_blank" class="btn-cyan w-full text-center border-2 border-netcup-cyan text-netcup-cyan hover:bg-netcup-cyan hover:text-netcup-dark font-bold py-2.5 px-6 rounded whitespace-nowrap">
+                                    <span x-text="t('detailsBtn')"></span> &gt;
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </main>
+
+        <!-- ================= 新增区段：COMPARE (参数对比) ================= -->
+        <section class="bg-gray-50 border-t border-gray-200 py-16" id="compare">
+            <div class="max-w-[1400px] mx-auto px-4">
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl font-bold text-netcup-dark mb-4" x-text="t('compareTitle')"></h2>
+                    <p class="text-gray-500 max-w-2xl mx-auto" x-text="t('compareDesc')"></p>
+                </div>
+
+                <div class="overflow-x-auto bg-white rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-gray-100 p-0 md:p-2 relative scroll-smooth">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr>
+                                <!-- 1. 冻结首列：强制锁定最大/最小宽度，不让它被随意拉伸 -->
+                                <th class="p-4 border-b-2 border-gray-100 w-[120px] min-w-[120px] max-w-[120px] md:w-[160px] md:min-w-[160px] md:max-w-[160px] sticky left-0 bg-white z-20 border-r border-gray-50"></th>
+                                
+                                <!-- 2. 循环已选择的服务器表头：强制锁定 220px -->
+                                <template x-for="(srv, i) in selectedServers" :key="i">
+                                    <th class="p-2 md:p-3 border-b-2 border-gray-100 w-[220px] min-w-[220px] max-w-[220px] text-center align-top">
+                                        <div class="bg-netcup-dark rounded-xl p-4 flex flex-col items-center relative overflow-hidden shadow-md h-[140px] justify-between">
+                                            <div class="absolute inset-0 bg-netcup-footer z-0"></div>
+                                            <div class="relative z-10 flex flex-col items-center w-full">
+                                                <h4 class="text-base font-bold text-white mb-1" x-text="srv.name"></h4>
+                                                <div class="text-2xl font-bold text-netcup-green leading-none my-1" x-text="'€ ' + srv.price"></div>
+                                                <button @click="removeFromCompare(i)" class="mt-2 text-sm font-bold text-white/70 hover:text-red-400 transition-colors inline-flex items-center gap-1">
+                                                    <i class="ph-fill ph-trash"></i> <span x-text="t('remove')"></span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </th>
+                                </template>
+                                
+                                <!-- 3. 添加服务器按钮：强制锁定 220px -->
+                                <th class="p-2 md:p-3 border-b-2 border-gray-100 w-[220px] min-w-[220px] max-w-[220px] text-center align-top" x-show="selectedServers.length < 8">
+                                    <button @click="showCompareModal = true" class="h-[140px] w-full rounded-xl border-2 border-dashed border-gray-300 text-gray-400 hover:border-netcup-cyan hover:text-netcup-cyan hover:bg-netcup-cyan/5 transition-all flex flex-col items-center justify-center gap-2">
+                                        <i class="ph-fill ph-plus-circle text-4xl"></i>
+                                        <span class="font-bold text-sm" x-text="t('addServer')"></span>
+                                    </button>
+                                </th>
+                                
+                                <!-- 4. 最右侧占位列 (Absorber)：宽度设为 w-full，吸收所有剩余的空白，保证左侧紧凑 -->
+                                <th class="border-b-2 border-gray-100 w-full min-w-[20px]"></th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            <tr x-show="selectedServers.length === 0">
+                                <td colspan="9" class="p-16 text-center text-gray-400 font-medium" x-text="t('emptyCompare')"></td>
+                            </tr>
+                            
+                            <!-- 动态循环输出参数行 -->
+                            <template x-for="(specKey, specIndex) in ['specCPU', 'specRAM', 'specDisk', 'specTraffic', 'specSpeed', 'specBackup', 'specConsole']" :key="specKey">
+                                <tr class="hover:bg-gray-50/50 transition-colors" x-show="selectedServers.length > 0">
+                                    
+                                    <!-- 数据行的首列：锁定宽度 -->
+                                    <td class="p-4 font-bold text-netcup-dark text-sm bg-white sticky left-0 z-10 border-r border-gray-50 w-[120px] min-w-[120px] max-w-[120px] md:w-[160px] md:min-w-[160px] md:max-w-[160px]" x-text="t(specKey)"></td>
+                                    
+                                    <!-- 参数内容列：锁定宽度 -->
+                                    <template x-for="srv in selectedServers" :key="srv.name">
+                                        <td class="p-4 text-sm text-netcup-text text-center w-[220px] min-w-[220px] max-w-[220px]">
+                                            <span x-text="srv.specs[currentLang] ? srv.specs[currentLang][specIndex] : srv.specs['en'][specIndex]"></span>
+                                        </td>
+                                    </template>
+                                    
+                                    <!-- 对应“添加服务器”的下部留白：锁定宽度 -->
+                                    <td x-show="selectedServers.length < 8" class="p-4 w-[220px] min-w-[220px] max-w-[220px]"></td>
+                                    
+                                    <!-- 占位列 -->
+                                    <td class="p-4 w-full min-w-[20px]"></td>
+                                </tr>
+                            </template>
+
+                            <!-- 底部直达购买按钮 -->
+                            <tr x-show="selectedServers.length > 0">
+                                <td class="p-4 sticky left-0 bg-white z-10 border-r border-gray-50 w-[120px] min-w-[120px] max-w-[120px] md:w-[160px] md:min-w-[160px] md:max-w-[160px]"></td>
+                                
+                                <template x-for="srv in selectedServers" :key="srv.name + 'btn'">
+                                    <td class="p-4 text-center w-[220px] min-w-[220px] max-w-[220px]">
+                                        <a :href="srv.url" target="_blank" class="btn-cyan inline-block text-center border-2 border-netcup-cyan text-netcup-cyan hover:bg-netcup-cyan hover:text-netcup-dark font-bold py-2.5 px-6 rounded whitespace-nowrap">
+                                            <span x-text="t('detailsBtn')"></span> &gt;
+                                        </a>
+                                    </td>
+                                </template>
+                                
+                                <td x-show="selectedServers.length < 8" class="p-4 w-[220px] min-w-[220px] max-w-[220px]"></td>
+                                
+                                <!-- 占位列 -->
+                                <td class="p-4 w-full min-w-[20px]"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-white border-t border-gray-200 py-16" id="coupons">
+            <div class="max-w-4xl mx-auto px-4">
+                <h2 class="text-3xl font-bold text-netcup-dark mb-8 text-center flex items-center justify-center gap-2">
+                    <i class="ph-fill ph-tag text-netcup-cyan"></i>
+                    <span x-text="t('vouchersTitle')"></span>
+                </h2>
+                
+                <div class="space-y-4">
+                    <div class="flex flex-col md:flex-row items-center justify-between p-6 bg-gray-50 rounded-lg border border-gray-200 hover:border-netcup-cyan transition-colors">
+                        <div class="mb-4 md:mb-0 text-center md:text-left">
+                            <h4 class="text-xl font-bold text-netcup-dark" x-text="t('voucher1Title')"></h4>
+                            <p class="text-sm text-gray-500 mt-1" x-text="t('voucher1Desc')"></p>
+                        </div>
+                        <div class="flex items-center gap-2 w-full md:w-auto">
+                            <code class="bg-white border border-dashed border-gray-300 text-netcup-dark font-mono px-4 py-3 rounded text-lg flex-grow text-center font-bold tracking-wider">36nc17497290250</code>
+                            <button @click="copyCode('36nc17497290250', $event)" class="bg-netcup-dark text-white px-4 py-3 rounded hover:bg-netcup-cyan hover:text-netcup-dark transition-all font-semibold flex items-center justify-center w-12 h-12" title="Copy code">
+                                <i class="ph-fill ph-copy text-lg"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div x-show="currentPage === 'imprint'" x-cloak class="flex-grow bg-white py-16">
+        <div class="max-w-3xl mx-auto px-4">
+            <h1 class="text-4xl font-bold text-netcup-dark mb-8" x-text="t('imprintTitle')"></h1>
+            <div class="prose prose-netcup max-w-none text-netcup-text" x-html="t('imprintContent')">
+                </div>
+        </div>
+    </div>
+
+    <div x-show="currentPage === 'privacy'" x-cloak class="flex-grow bg-white py-16">
+        <div class="max-w-3xl mx-auto px-4">
+            <h1 class="text-4xl font-bold text-netcup-dark mb-8" x-text="t('privacyTitle')"></h1>
+            <div class="prose prose-netcup max-w-none text-netcup-text" x-html="t('privacyContent')">
+                </div>
+        </div>
+    </div>
+
+    <!-- ================= 视图：BENCHMARKS (性能测试) ================= -->
+    <div x-show="currentPage === 'benchmarks'" x-cloak class="flex-grow bg-white py-16">
+        <div class="max-w-3xl mx-auto px-4">
+            <h1 class="text-4xl font-bold text-netcup-dark mb-8" x-text="t('benchmarksTitle')"></h1>
+            <div class="bg-gray-50 rounded-2xl border border-gray-100 p-8 shadow-[0_4px_20px_rgba(0,0,0,0.02)]" x-html="t('benchmarksContent')">
+                <!-- 文案通过 data.js 渲染 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= 视图：CONTACT (联系我们) ================= -->
+    <div x-show="currentPage === 'contact'" x-cloak class="flex-grow bg-white py-16">
+        <div class="max-w-3xl mx-auto px-4">
+            <h1 class="text-4xl font-bold text-netcup-dark mb-8" x-text="t('contactTitle')"></h1>
+            <div class="bg-gray-50 rounded-2xl border border-gray-100 p-8 shadow-[0_4px_20px_rgba(0,0,0,0.02)]" x-html="t('contactContent')">
+                <!-- 文案通过 data.js 渲染 -->
+            </div>
+        </div>
+    </div>
+
+
+
+    <div x-show="showCompareModal" x-cloak class="fixed inset-0 z-[100] flex items-center justify-center bg-netcup-dark/60 backdrop-blur-sm p-4" 
+         x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
+        
+        <div @click.outside="showCompareModal = false" class="bg-white rounded-2xl w-full max-w-3xl max-h-[85vh] flex flex-col shadow-2xl"
+             x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-8 scale-95" x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+             x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 scale-100" x-transition:leave-end="opacity-0 translate-y-8 scale-95">
+            
+            <div class="px-6 py-5 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-2xl">
+                <h3 class="text-xl font-bold text-netcup-dark" x-text="t('selectServerTitle')"></h3>
+                <button @click="showCompareModal = false" class="text-gray-400 hover:text-netcup-dark transition-colors"><i class="ph-fill ph-x text-2xl"></i></button>
+            </div>
+            
+            <div class="p-6 overflow-y-auto space-y-8">
+                <template x-for="(catData, catKey) in categories" :key="catKey">
+                    <div>
+                        <h4 class="text-base font-bold text-netcup-cyan border-b border-gray-100 pb-2 mb-4" x-text="t('tab' + catKey.charAt(0).toUpperCase() + catKey.slice(1))"></h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                            <template x-for="card in catData.cards" :key="card.name">
+                                <button @click="addToCompare(card)" 
+                                        :disabled="selectedServers.includes(card)"
+                                        class="text-left px-4 py-3 rounded-xl border-2 transition-all group flex justify-between items-center"
+                                        :class="selectedServers.includes(card) ? 'border-gray-200 bg-gray-50 opacity-50 cursor-not-allowed' : 'border-gray-100 hover:border-netcup-cyan hover:shadow-md'">
+                                    <div>
+                                        <div class="font-bold text-netcup-dark text-sm group-hover:text-netcup-cyan transition-colors" x-text="card.name"></div>
+                                        <div class="text-xs text-netcup-green font-bold mt-1" x-text="'€ ' + card.price"></div>
+                                    </div>
+                                    <i x-show="!selectedServers.includes(card)" class="ph-fill ph-plus-circle text-xl text-gray-300 group-hover:text-netcup-cyan transition-colors"></i>
+                                    <i x-show="selectedServers.includes(card)" class="ph-fill ph-check text-xl text-gray-400"></i>
+                                </button>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-netcup-footer text-white pt-12 pb-6 mt-auto">
+        <div class="max-w-6xl mx-auto px-4 text-center md:text-left">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">netcup<span class="text-netcup-cyan">news</span></h3>
+                    <p class="text-sm text-gray-300 leading-relaxed" x-text="t('footerDesc')"></p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4" x-text="t('quickLinks')"></h3>
+                    <ul class="space-y-2 text-sm text-gray-300">
+                        <!-- 1. netcup 官网 (外链) -->
+                        <li><a href="https://www.netcup.com" target="_blank" class="hover:text-netcup-cyan transition-colors inline-flex items-center gap-1" title="Netcup Official">
+                            <span x-text="t('officialSite')"></span> <i class="ph-fill ph-arrow-square-out text-xs"></i>
+                        </a></li>
+                        <!-- 2. 基准性能测试 (SPA 跳转) -->
+                        <li><a href="#" @click.prevent="goToPage('benchmarks')" class="hover:text-netcup-cyan transition-colors cursor-pointer" x-text="t('benchmarks')"></a></li>
+                        <!-- 3. 联系我们 (SPA 跳转) -->
+                        <li><a href="#" @click.prevent="goToPage('contact')" class="hover:text-netcup-cyan transition-colors cursor-pointer" x-text="t('contactUs')"></a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4" x-text="t('affiliateDisclaimerTitle')"></h3>
+                    <p class="text-sm text-gray-400 leading-relaxed" x-text="t('affiliateDisclaimerDesc')"></p>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-600/50 pt-6 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-400">
+                <p x-text="t('rightsReserved')"></p>
+                <div class="flex gap-4">
+                    <a href="#" @click.prevent="goToPage('imprint')" class="hover:text-white transition-colors cursor-pointer" x-text="t('imprint')"></a>
+                    <a href="#" @click.prevent="goToPage('privacy')" class="hover:text-white transition-colors cursor-pointer" x-text="t('privacyPolicy')"></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+@font-face {
+  font-family: "Phosphor-Fill";
+  src: url("../fonts/icon.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+.ph-fill {
+  font-family: "Phosphor-Fill" !important;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  letter-spacing: 0;
+  font-feature-settings: "liga";
+  font-variant-ligatures: discretionary-ligatures;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.ph-fill.ph-globe:before { content: "\e288"; }
+.ph-fill.ph-caret-down:before { content: "\e136"; }
+.ph-fill.ph-check:before { content: "\e182"; }
+.ph-fill.ph-arrow-square-out:before { content: "\e5de"; }
+.ph-fill.ph-trash:before { content: "\e4a6"; }
+.ph-fill.ph-plus-circle:before { content: "\e3d6"; }
+.ph-fill.ph-tag:before { content: "\e478"; }
+.ph-fill.ph-copy:before { content: "\e1ca"; }
+.ph-fill.ph-x:before { content: "\e4f6"; }
+.ph-fill.ph-hammer:before { content: "\e80e"; }
+.ph-fill.ph-envelope:before { content: "\e214"; }
+.ph-fill.ph-paper-plane-tilt:before { content: "\e398"; }
+.ph-fill.ph-list:before { content: "\e2f0"; }
